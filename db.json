@@ -1,87 +1,134 @@
 {
-  "vehicles": [
+  "orders": [
     {
-      "id": 1,
-      "type": "Truck",
-      "licensePlate": "ABC-123",
-      "capacity": 5000,
-      "status": "available",
-      "driverId": 1,
-      "createdAt": "2024-01-15T10:30:00Z"
+      "id": "7d2c",
+      "number": 1001,
+      "customer_name": "ABC Corporation",
+      "date": "2024-01-15T10:30:00Z",
+      "waypoints": [
+        {
+          "id": "1f4m",
+          "location_address": "123 Main Street, Downtown",
+          "type": "pickup"
+        },
+        {
+          "id": "3b9e",
+          "location_address": "456 Business Park, Industrial Zone",
+          "type": "delivery"
+        }
+      ]
     },
     {
-      "id": 2,
-      "type": "Van",
-      "licensePlate": "XYZ-789",
-      "capacity": 1500,
-      "status": "in-use",
-      "driverId": 2,
-      "createdAt": "2024-01-16T14:20:00Z"
+      "id": "9f4a",
+      "number": 1002,
+      "customer_name": "XYZ Logistics",
+      "date": "2024-01-16T14:20:00Z",
+      "waypoints": [
+        {
+          "id": "3b6e",
+          "location_address": "789 Warehouse Road, Port District",
+          "type": "pickup"
+        },
+        {
+          "id": "9f4d",
+          "location_address": "321 Commerce Avenue, City Center",
+          "type": "delivery"
+        },
+        {
+          "id": "1d9f",
+          "location_address": "654 Market Street, Shopping District",
+          "type": "delivery"
+        }
+      ]
     },
     {
-      "id": 3,
-      "type": "Bus",
-      "licensePlate": "DEF-456",
-      "capacity": 40,
-      "status": "maintenance",
-      "driverId": null,
-      "createdAt": "2024-01-17T09:15:00Z"
-    }
-  ],
-  "routes": [
-    {
-      "id": 1,
-      "name": "Route A - City Center",
-      "origin": "Downtown Terminal",
-      "destination": "City Center",
-      "distance": 25,
-      "estimatedTime": 45,
-      "vehicleId": 1,
-      "status": "active",
-      "createdAt": "2024-01-18T08:00:00Z"
+      "id": "3b6e",
+      "number": 1003,
+      "customer_name": "Global Shipping Co.",
+      "date": "2024-01-17T09:15:00Z",
+      "waypoints": [
+        {
+          "id": "1f4d",
+          "location_address": "987 Distribution Center, Suburb",
+          "type": "pickup"
+        },
+        {
+          "id": "1w9f",
+          "location_address": "147 Delivery Hub, Downtown",
+          "type": "delivery"
+        }
+      ]
     },
     {
-      "id": 2,
-      "name": "Route B - Industrial Zone",
-      "origin": "Main Hub",
-      "destination": "Industrial Zone",
-      "distance": 60,
-      "estimatedTime": 90,
-      "vehicleId": 2,
-      "status": "active",
-      "createdAt": "2024-01-19T07:30:00Z"
-    }
-  ],
-  "drivers": [
-    {
-      "id": 1,
-      "name": "John Smith",
-      "email": "john.smith@example.com",
-      "phone": "+1234567890",
-      "licenseNumber": "DL-12345",
-      "experience": 5,
-      "status": "active",
-      "createdAt": "2024-01-10T12:00:00Z"
+      "id": "3b6e",
+      "number": 1003,
+      "customer_name": "Global Shipping Co.",
+      "date": "2024-01-17T09:15:00Z",
+      "waypoints": [
+        {
+          "id": "1f4d",
+          "location_address": "987 Distribution Center, Suburb",
+          "type": "pickup"
+        },
+        {
+          "id": "1w9f",
+          "location_address": "147 Delivery Hub, Downtown",
+          "type": "delivery"
+        }
+      ]
     },
     {
-      "id": 2,
-      "name": "Sarah Johnson",
-      "email": "sarah.johnson@example.com",
-      "phone": "+1234567891",
-      "licenseNumber": "DL-67890",
-      "experience": 8,
-      "status": "active",
-      "createdAt": "2024-01-11T13:15:00Z"
+      "id": "3b6e",
+      "number": 1003,
+      "customer_name": "Global Shipping Co.",
+      "date": "2024-01-17T09:15:00Z",
+      "waypoints": [
+        {
+          "id": "1f4d",
+          "location_address": "987 Distribution Center, Suburb",
+          "type": "pickup"
+        },
+        {
+          "id": "1w9f",
+          "location_address": "147 Delivery Hub, Downtown",
+          "type": "delivery"
+        }
+      ]
     },
     {
-      "id": 3,
-      "name": "Mike Davis",
-      "email": "mike.davis@example.com",
-      "phone": "+1234567892",
-      "licenseNumber": "DL-11111",
-      "experience": 3,
-      "status": "on-leave",
-      "createdAt": "2024-01-12T10:45:00Z"
+      "id": "8c3e",
+      "number": null,
+      "customer_name": "",
+      "date": "",
+      "waypoints": []
+    },
+    {
+      "id": "80cd",
+      "number": null,
+      "customer_name": "",
+      "date": "",
+      "waypoints": []
+    },
+    {
+      "id": "1ec4",
+      "number": null,
+      "customer_name": "",
+      "date": "",
+      "waypoints": []
+    },
+    {
+      "id": "90c7",
+      "number": null,
+      "customer_name": "",
+      "date": "",
+      "waypoints": []
+    },
+    {
+      "id": "12c3",
+      "number": "",
+      "customer_name": "dfsdfs",
+      "date": "2025-11-06",
+      "waypoints": []
     }
   ]
 }

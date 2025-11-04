@@ -1,19 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import TwoExample from '../views/TwoExample.vue'
+import HomeView from '../views/OrdersView.vue'
+import TwoExample from '../views/CreateOrder.vue'
+import DefaultLayout from '@/components/layouts/DefaultLayout.vue'
+import OrderDetail from '@/views/OrderDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/two',
-      name: 'two-example',
-      component: TwoExample,
+      name: 'default-layout',
+      component: DefaultLayout,
+      children: [
+        {
+          path: '/',
+          name: 'orders',
+          component: HomeView,
+        },
+        {
+          path: '/create-order',
+          name: 'create-order',
+          component: TwoExample,
+        },
+        {
+          path: '/order/:id',
+          name: 'order',
+          component: OrderDetail,
+        },
+      ],
     },
   ],
 })
