@@ -1,94 +1,141 @@
 <template>
-  <section class="flex items-center justify-center flex-col gap-3 max-w-7xl mx-auto">
+  <section class="flex items-center justify-center flex-col gap-6 max-w-7xl mx-auto">
     <h1 class="text-2xl font-bold text-blue-700">Create Order</h1>
 
     <form
       @submit.prevent="addOrder"
-      class="flex w-full flex-col gap-8 bg-gray-100 px-6 sm:px-12 sm:py-6 py-3 rounded-lg"
+      class="flex w-full flex-col gap-8 bg-white rounded-lg shadow-lg overflow-hidden"
     >
-      <div class="flex gap-6">
-        <div class="flex flex-col gap-1 w-full">
-          <label for="number">Number<span class="text-red-500">*</span></label>
+      <div class="bg-blue-600 p-6">
+        <h2 class="text-xl font-bold mb-4 text-white">Order Information</h2>
 
-          <InputBar type="number" id="number" v-model="formData.number" />
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="flex flex-col gap-2">
+            <label for="number" class="text-sm font-semibold text-white">
+              Number <span class="text-red-300">*</span>
+            </label>
 
-        <div class="flex flex-col gap-1 w-full">
-          <label for="customer_name">Customer Name<span class="text-red-500">*</span></label>
-
-          <InputBar type="text" id="customer_name" v-model="formData.customer_name" />
-        </div>
-
-        <div class="flex flex-col gap-1 w-full">
-          <label for="date">Date<span class="text-red-500">*</span></label>
-
-          <InputBar type="date" id="date" v-model="formData.date" />
-        </div>
-      </div>
-
-      <ButtonBase
-        v-if="formData.waypoints.length === 0"
-        class="self-center"
-        type="button"
-        @click="addWaypoint"
-      >
-        <PlusCircle />Add Waypoint
-      </ButtonBase>
-
-      <div class="grid grid-cols-3 gap-6">
-        <TransitionGroup name="fade" mode="out-in">
-          <div
-            v-for="(waypoint, index) in formData.waypoints"
-            :key="waypoint.id"
-            class="flex flex-col gap-2 w-full bg-white p-4 px-6 rounded-xl relative shadow-md"
-          >
-            <ButtonBase
-              v-if="index === formData.waypoints.length - 1"
-              class="absolute flex items-center justify-center top-1/2 -translate-y-1/2 -right-8 rounded-full size-10 p-0"
-              type="button"
-              @click="addWaypoint"
-            >
-              <PlusCircle />
-            </ButtonBase>
-
-            <ButtonBase
-              class="absolute top-1 right-1 size-6"
-              variant="red"
-              kind="icon"
-              type="button"
-              @click="handleConfirmDeleteModalOpen(waypoint)"
-              ><XmarkCircle />
-            </ButtonBase>
-
-            <div class="flex flex-col gap-1 w-full">
-              <label for="location_address">Location Address</label>
-              <InputBar
-                type="text"
-                id="location_address"
-                v-model="waypoint.location_address"
-                class="bg-gray-100"
-              />
-            </div>
-
-            <div class="flex flex-col gap-1 w-full">
-              <label for="type">Type</label>
-
-              <select
-                id="type"
-                v-model="waypoint.type"
-                class="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg bg-gray-100"
-              >
-                <option value="pickup">Pickup</option>
-                <option value="delivery">Delivery</option>
-              </select>
-            </div>
+            <InputBar type="number" id="number" v-model="formData.number" />
           </div>
-        </TransitionGroup>
+
+          <div class="flex flex-col gap-2">
+            <label for="customer_name" class="text-sm font-semibold text-white">
+              Customer Name <span class="text-red-300">*</span>
+            </label>
+            <InputBar type="text" id="customer_name" v-model="formData.customer_name" />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="date" class="text-sm font-semibold text-white">
+              Date <span class="text-red-300">*</span>
+            </label>
+
+            <InputBar type="date" id="date" v-model="formData.date" />
+          </div>
+        </div>
       </div>
 
-      <ButtonBase class="self-center" type="submit" variant="green">
-        <PlusCircle /> Create Order
-      </ButtonBase>
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-blue-700">Waypoints</h2>
+
+          <ButtonBase
+            v-if="formData.waypoints.length === 0"
+            type="button"
+            variant="blue"
+            @click="addWaypoint"
+          >
+            <PlusCircle /> Add Waypoint
+          </ButtonBase>
+        </div>
+
+        <div v-if="formData.waypoints.length === 0" class="p-8 bg-gray-100 rounded-lg text-center">
+          <p class="text-gray-600 mb-4">No waypoints added yet</p>
+
+          <ButtonBase type="button" variant="blue" @click="addWaypoint">
+            <PlusCircle /> Add Your First Waypoint
+          </ButtonBase>
+        </div>
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <TransitionGroup name="fade" mode="out-in">
+            <div
+              v-for="(waypoint, index) in formData.waypoints"
+              :key="waypoint.id"
+              class="flex flex-col gap-4 w-full bg-gray-100 p-5 rounded-lg relative shadow-md"
+            >
+              <ButtonBase
+                v-if="index === formData.waypoints.length - 1"
+                class="rounded-full size-10 p-0 absolute top-1/2 -translate-y-1/2 -right-6"
+                variant="blue"
+                kind="icon"
+                type="button"
+                @click="addWaypoint"
+              >
+                <PlusCircle />
+              </ButtonBase>
+
+              <div class="flex items-center justify-between">
+                <span
+                  :class="[
+                    'px-3 py-1 rounded-full text-sm font-semibold text-white',
+                    waypoint.type === 'pickup' ? 'bg-green-500' : 'bg-blue-500',
+                  ]"
+                >
+                  {{ index + 1 }}. {{ waypoint.type === 'pickup' ? 'Pickup' : 'Delivery' }}
+                </span>
+
+                <div class="flex gap-2">
+                  <ButtonBase
+                    class="rounded-full size-8 p-0"
+                    variant="red"
+                    kind="icon"
+                    type="button"
+                    @click="handleConfirmDeleteModalOpen(waypoint)"
+                  >
+                    <XmarkCircle />
+                  </ButtonBase>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                  <label for="location_address" class="text-sm font-semibold text-gray-700">
+                    Location Address <span class="text-red-500">*</span>
+                  </label>
+
+                  <InputBar
+                    type="text"
+                    :id="`location_address_${waypoint.id}`"
+                    v-model="waypoint.location_address"
+                    class="bg-white"
+                  />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <label for="type" class="text-sm font-semibold text-gray-700"> Type </label>
+
+                  <select
+                    :id="`type_${waypoint.id}`"
+                    v-model="waypoint.type"
+                    class="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base bg-white border border-gray-300"
+                  >
+                    <option value="pickup">Pickup</option>
+
+                    <option value="delivery">Delivery</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </TransitionGroup>
+        </div>
+      </div>
+
+      <div class="p-6 bg-gray-50 border-t border-gray-200">
+        <div class="flex justify-center gap-4">
+          <ButtonBase type="submit" variant="green"> <PlusCircle /> Create Order </ButtonBase>
+        </div>
+      </div>
     </form>
 
     <ConfirmDeleteModal
@@ -126,7 +173,7 @@ const Order = z.object({
     z.object({
       id: z.string(),
       location_address: z.string().min(1),
-      type: z.enum(WaypointTypeEnum),
+      type: z.enum([WaypointTypeEnum.PICKUP, WaypointTypeEnum.DELIVERY]),
     }),
   ),
 })
@@ -143,6 +190,9 @@ const addOrder = async () => {
   try {
     const response = await fetch('http://localhost:3001/orders', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(formData.value),
     })
     if (!response.ok) throw Error('Something went wrong!')
@@ -176,7 +226,7 @@ const handleConfirmDeleteModalOpen = (waypoint: Waypoint) => {
 const validateForm = () => {
   const validatedData = Order.safeParse(formData.value)
   if (!validatedData.success) {
-    toastMessageStore.setMessage(validatedData.error.message, 'error')
+    toastMessageStore.setMessage('Please fill in all required fields', 'error')
     console.log(validatedData.error)
     return false
   }
@@ -195,11 +245,16 @@ watch(
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.fade-enter-from,
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
 .fade-leave-to {
   opacity: 0;
+  transform: translateX(20px);
 }
 </style>

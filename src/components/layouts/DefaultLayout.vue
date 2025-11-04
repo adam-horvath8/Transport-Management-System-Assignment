@@ -13,7 +13,7 @@
       </nav>
     </header>
 
-    <main class="flex-1 p-6">
+    <main class="flex-1 sm:p-6 p-3">
       <Transition name="fade" mode="out-in">
         <RouterView :key="route.path" />
       </Transition>
