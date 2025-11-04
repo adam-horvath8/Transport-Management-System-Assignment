@@ -1,10 +1,13 @@
 <template>
   <article
-    class="p-4 bg-white rounded-md shadow-lg relative transition-all duration-300 hover:scale-102 active:scale-98"
+    class="p-4 bg-white rounded-lg shadow-lg relative transition-all duration-300 hover:scale-102 active:scale-98"
   >
-    <RouterLink :to="`/order/${order.id}`" class="absolute inset-0"></RouterLink>
+    <RouterLink
+      :to="{ name: 'order', params: { id: order.id } }"
+      class="absolute inset-0"
+    ></RouterLink>
 
-    <header class="flex justify-between items-center bg-blue-600 p-2 rounded-md text-white">
+    <header class="flex justify-between items-center bg-blue-600 p-2 rounded-lg text-white">
       <h2>Order #{{ order.number }}</h2>
     </header>
 

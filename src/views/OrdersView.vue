@@ -1,24 +1,35 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
-    <OrderCard v-for="order in data" :key="order.id" :order="order" />
-  </div>
+  <section>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
+      <OrderCard v-for="order in data" :key="order.id" :order="order" />
+    </div>
+
+    <SpinnerBase v-if="loading" size="xl" class="mx-auto" />
+  </section>
 </template>
 
 <script setup lang="ts">
+import SpinnerBase from '@/components/base/SpinnerBase.vue'
 import OrderCard from '@/components/OrderCard.vue'
 import { onMounted, ref } from 'vue'
 
 const data = ref()
-
+const loading = ref(true)
 onMounted(async () => {
-  const response = await fetch('http://localhost:3001/orders')
-  console.log(response)
+  try {
+    loading.value = true
 
-  if (response.ok) {
-    console.log('fdfs')
+    const response = await fetch('http://localhost:3001/orders')
+
+    if (!response.ok) throw Error('Something went wrong!')
 
     data.value = await response.json()
-    console.log(data.value)
+  } catch (error) {
+    if (error) {
+      console.log(error)
+    }
+  } finally {
+    loading.value = false
   }
 })
 </script>

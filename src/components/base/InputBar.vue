@@ -5,7 +5,7 @@
     v-model="model"
     :class="
       twMerge(
-        'bg-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg',
+        'bg-white p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg',
         props.class,
       )
     "
