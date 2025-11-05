@@ -80,9 +80,8 @@
 
       <div class="p-6 bg-gray-50 border-t border-gray-200">
         <div class="flex justify-center gap-4">
-          <ButtonBase type="submit">
-            <PlusCircle />{{ isEdit ? 'Edit Order' : 'Create Order' }}
-          </ButtonBase>
+          <ButtonBase v-if="!isEdit" type="submit"> <PlusCircle />{{ 'Create Order' }} </ButtonBase>
+          <ButtonBase v-else type="submit"> <PenEdit />{{ 'Edit Order' }} </ButtonBase>
         </div>
       </div>
     </form>
@@ -108,6 +107,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import ConfirmDeleteModal from '../base/ConfirmDeleteModal.vue'
 import { useOrderStore } from '@/stores/order'
+import PenEdit from '../icons/PenEdit.vue'
 
 dayjs.extend(utc)
 

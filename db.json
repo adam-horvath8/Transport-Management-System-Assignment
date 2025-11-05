@@ -96,7 +96,7 @@
       ]
     },
     {
-      "number": "3",
+      "number": "4",
       "customer_name": "joooo",
       "date": "2025-11-12T00:00:00.000Z",
       "waypoints": [
@@ -109,6 +109,11 @@
           "id": "6b8123e0-5bdb-4a87-8e99-a21b2094836b",
           "location_address": "hgfdhdf",
           "type": "pickup"
+        },
+        {
+          "id": "261b35c0-6abc-4357-aa4a-c021093b5aec",
+          "location_address": "gfhdghdfg",
+          "type": "delivery"
         }
       ],
       "id": "8127"

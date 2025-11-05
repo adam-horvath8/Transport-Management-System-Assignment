@@ -2,59 +2,51 @@
   <section class="flex flex-col gap-6 max-w-screen-2xl mx-auto">
     <h1 class="text-4xl font-bold text-blue-800 flex justify-center">Orders</h1>
 
-    <form @submit.prevent="handleSearch" class="flex flex-col items-center justify-center gap-2">
-      <div class="flex gap-2">
-        <InputBar
-          type="text"
-          id="search"
-          v-model="search"
-          placeholder="Customer Name"
-          class="w-full max-w-md self-center bg-gray-100 p-2 rounded-full"
-        />
+    <form @submit.prevent="handleSearch" class="flex items-center gap-4 flex-wrap justify-center">
+      <!-- Search input -->
+      <InputBar
+        type="text"
+        id="search"
+        v-model="search"
+        placeholder="Customer Name"
+        class="w-full max-w-xs bg-gray-100 p-2 rounded-full"
+      />
 
-        <ButtonBase type="submit" kind="icon" variant="blue" class="shrink-0">
-          <MagnifyingGlass class="size-6" />
-        </ButtonBase>
+      <!-- Date Filter -->
+      <select
+        v-model="dateFilter"
+        class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm"
+      >
+        <option value="all">All</option>
+        <option value="today">Today</option>
+        <option value="this-week">This Week</option>
+        <option value="this-month">This Month</option>
+        <option value="next-week">Next Week</option>
+        <option value="next-month">Next Month</option>
+      </select>
 
-        <ButtonBase
-          v-if="isFilterActive"
-          type="button"
-          kind="icon"
-          variant="red"
-          @click="isFilterActive = false"
-          class="shrink-0"
-          ><XmarkCircle
-        /></ButtonBase>
-      </div>
+      <!-- Due soon -->
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" class="size-5" v-model="isDueSoon" />
+        Due Soon
+      </label>
 
-      <div class="flex gap-4 items-center">
-        <div class="flex gap-2 items-center">
-          <label for="due-soon-checkbox">Due Soon</label>
+      <!-- Search button -->
+      <ButtonBase type="submit" kind="icon" variant="blue" class="shrink-0">
+        <MagnifyingGlass class="size-6" />
+      </ButtonBase>
 
-          <input type="checkbox" id="due-soon-checkbox" class="size-6" v-model="isDueSoon" />
-        </div>
-
-        <div class="flex gap-2 items-center">
-          <label for="date-filter" class="text-sm font-semibold">Filter by Date:</label>
-
-          <select
-            v-model="dateFilter"
-            class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm"
-          >
-            <option value="all">All</option>
-
-            <option value="today">Today</option>
-
-            <option value="this-week">This Week</option>
-
-            <option value="this-month">This Month</option>
-
-            <option value="next-week">Next Week</option>
-
-            <option value="next-month">Next Month</option>
-          </select>
-        </div>
-      </div>
+      <!-- Reset filter button -->
+      <ButtonBase
+        v-if="isFilterActive"
+        type="button"
+        kind="icon"
+        variant="red"
+        @click="isFilterActive = false"
+        class="shrink-0"
+      >
+        <XmarkCircle />
+      </ButtonBase>
     </form>
 
     <div
