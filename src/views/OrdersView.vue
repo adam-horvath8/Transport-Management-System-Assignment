@@ -27,10 +27,33 @@
         /></ButtonBase>
       </div>
 
-      <div class="flex gap-2">
-        <input type="checkbox" id="due-soon-checkbox" class="size-6" v-model="isDueSoon" />
+      <div class="flex gap-4 items-center">
+        <div class="flex gap-2 items-center">
+          <label for="due-soon-checkbox">Due Soon</label>
 
-        <label for="due-soon-checkbox">Due Soon</label>
+          <input type="checkbox" id="due-soon-checkbox" class="size-6" v-model="isDueSoon" />
+        </div>
+
+        <div class="flex gap-2 items-center">
+          <label for="date-filter" class="text-sm font-semibold">Filter by Date:</label>
+
+          <select
+            v-model="dateFilter"
+            class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm"
+          >
+            <option value="all">All</option>
+
+            <option value="today">Today</option>
+
+            <option value="this-week">This Week</option>
+
+            <option value="this-month">This Month</option>
+
+            <option value="next-week">Next Week</option>
+
+            <option value="next-month">Next Month</option>
+          </select>
+        </div>
       </div>
     </form>
 
@@ -68,6 +91,7 @@ const orders = ref<Order[]>([])
 const loading = ref(true)
 const search = ref('')
 const isDueSoon = ref(false)
+const dateFilter = ref('all')
 const isFilterActive = ref(false)
 
 onMounted(() => {
@@ -101,19 +125,66 @@ watch(
 
       search.value = ''
       isDueSoon.value = false
+      dateFilter.value = 'all'
     }
   },
 )
 
-watch(
-  () => isDueSoon.value,
-  (newValue) => {
-    console.log(newValue)
-  },
-)
+const filterByDate = (order: Order): boolean => {
+  if (dateFilter.value === 'all') return true
+
+  const orderDate = dayjs.utc(order.date).startOf('day')
+  const today = dayjs.utc().startOf('day')
+
+  switch (dateFilter.value) {
+    case 'today':
+      return orderDate.isSame(today)
+
+    case 'this-week':
+      const startOfWeek = today.startOf('week')
+      const endOfWeek = today.endOf('week')
+      return (
+        (orderDate.isAfter(startOfWeek) || orderDate.isSame(startOfWeek)) &&
+        (orderDate.isBefore(endOfWeek) || orderDate.isSame(endOfWeek))
+      )
+
+    case 'this-month':
+      const startOfMonth = today.startOf('month')
+      const endOfMonth = today.endOf('month')
+      return (
+        (orderDate.isAfter(startOfMonth) || orderDate.isSame(startOfMonth)) &&
+        (orderDate.isBefore(endOfMonth) || orderDate.isSame(endOfMonth))
+      )
+
+    case 'next-week':
+      const nextWeekStart = today.add(1, 'week').startOf('week')
+      const nextWeekEnd = today.add(1, 'week').endOf('week')
+      return (
+        (orderDate.isAfter(nextWeekStart) || orderDate.isSame(nextWeekStart)) &&
+        (orderDate.isBefore(nextWeekEnd) || orderDate.isSame(nextWeekEnd))
+      )
+
+    case 'next-month':
+      const nextMonthStart = today.add(1, 'month').startOf('month')
+      const nextMonthEnd = today.add(1, 'month').endOf('month')
+      return (
+        (orderDate.isAfter(nextMonthStart) || orderDate.isSame(nextMonthStart)) &&
+        (orderDate.isBefore(nextMonthEnd) || orderDate.isSame(nextMonthEnd))
+      )
+
+    default:
+      return true
+  }
+}
 
 const handleSearch = async () => {
   await fetchOrders()
+
+  orders.value = orders.value.filter((order) =>
+    order.customer_name.toLowerCase().includes(search.value.toLowerCase()),
+  )
+
+  orders.value = orders.value.filter(filterByDate)
 
   if (isDueSoon.value) {
     orders.value = orders.value.sort((a, b) => {
@@ -122,10 +193,6 @@ const handleSearch = async () => {
       return dateA - dateB
     })
   }
-
-  orders.value = orders.value.filter((order) =>
-    order.customer_name.toLowerCase().includes(search.value.toLowerCase()),
-  )
 
   isFilterActive.value = true
 }
