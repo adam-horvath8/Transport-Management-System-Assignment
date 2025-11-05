@@ -11,24 +11,43 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="flex flex-col gap-2">
-            <label for="number" class="text-sm font-semibold text-white">
-              Number <span class="text-red-300">*</span>
-            </label>
+            <div class="flex items-center justify-between">
+              <label for="number" class="text-sm font-semibold text-white">
+                Number <span class="text-red-300">*</span>
+              </label>
+
+              <span v-if="formErrors.number.isError" class="text-red-200 text-sm">
+                {{ formErrors.number.message }}
+              </span>
+            </div>
 
             <InputBar type="number" id="number" v-model="formData.number" />
           </div>
 
           <div class="flex flex-col gap-2">
-            <label for="customer_name" class="text-sm font-semibold text-white">
-              Customer Name <span class="text-red-300">*</span>
-            </label>
+            <div class="flex items-center justify-between">
+              <label for="customer_name" class="text-sm font-semibold text-white">
+                Customer Name <span class="text-red-300">*</span>
+              </label>
+
+              <span v-if="formErrors.customer_name.isError" class="text-red-200 text-sm">
+                {{ formErrors.customer_name.message }}
+              </span>
+            </div>
+
             <InputBar type="text" id="customer_name" v-model="formData.customer_name" />
           </div>
 
           <div class="flex flex-col gap-2">
-            <label for="date" class="text-sm font-semibold text-white">
-              Date <span class="text-red-300">*</span>
-            </label>
+            <div class="flex items-center justify-between">
+              <label for="date" class="text-sm font-semibold text-white">
+                Date <span class="text-red-300">*</span>
+              </label>
+
+              <span v-if="formErrors.date.isError" class="text-red-200 text-sm">
+                {{ formErrors.date.message }}
+              </span>
+            </div>
 
             <InputBar type="date" id="date" v-model="formData.date" />
           </div>
@@ -39,14 +58,9 @@
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl font-bold text-blue-700">Waypoints</h2>
 
-          <ButtonBase
-            v-if="formData.waypoints.length === 0"
-            type="button"
-            variant="blue"
-            @click="addWaypoint"
-          >
-            <PlusCircle /> Add Waypoint
-          </ButtonBase>
+          <span v-if="formErrors.location_address.isError" class="text-red-500 text-sm">
+            {{ formErrors.location_address.message }}
+          </span>
         </div>
 
         <div v-if="formData.waypoints.length === 0" class="p-8 bg-gray-100 rounded-lg text-center">
@@ -57,78 +71,13 @@
           </ButtonBase>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <TransitionGroup name="fade" mode="out-in">
-            <div
-              v-for="(waypoint, index) in formData.waypoints"
-              :key="waypoint.id"
-              class="flex flex-col gap-4 w-full bg-gray-100 p-5 rounded-lg relative shadow-md"
-            >
-              <ButtonBase
-                v-if="index === formData.waypoints.length - 1"
-                class="rounded-full size-10 p-0 absolute top-1/2 -translate-y-1/2 -right-6"
-                variant="blue"
-                kind="icon"
-                type="button"
-                @click="addWaypoint"
-              >
-                <PlusCircle />
-              </ButtonBase>
-
-              <div class="flex items-center justify-between">
-                <span
-                  :class="[
-                    'px-3 py-1 rounded-full text-sm font-semibold text-white',
-                    waypoint.type === 'pickup' ? 'bg-green-500' : 'bg-blue-500',
-                  ]"
-                >
-                  {{ index + 1 }}. {{ waypoint.type === 'pickup' ? 'Pickup' : 'Delivery' }}
-                </span>
-
-                <div class="flex gap-2">
-                  <ButtonBase
-                    class="rounded-full size-8 p-0"
-                    variant="red"
-                    kind="icon"
-                    type="button"
-                    @click="handleConfirmDeleteModalOpen(waypoint)"
-                  >
-                    <XmarkCircle />
-                  </ButtonBase>
-                </div>
-              </div>
-
-              <div class="flex flex-col gap-4">
-                <div class="flex flex-col gap-2">
-                  <label for="location_address" class="text-sm font-semibold text-gray-700">
-                    Location Address <span class="text-red-500">*</span>
-                  </label>
-
-                  <InputBar
-                    type="text"
-                    :id="`location_address_${waypoint.id}`"
-                    v-model="waypoint.location_address"
-                    class="bg-white"
-                  />
-                </div>
-
-                <div class="flex flex-col gap-2">
-                  <label for="type" class="text-sm font-semibold text-gray-700"> Type </label>
-
-                  <select
-                    :id="`type_${waypoint.id}`"
-                    v-model="waypoint.type"
-                    class="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base bg-white border border-gray-300"
-                  >
-                    <option value="pickup">Pickup</option>
-
-                    <option value="delivery">Delivery</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </TransitionGroup>
-        </div>
+        <WaypointsForms
+          v-else
+          :waypoints="formData.waypoints"
+          @add-waypoint="addWaypoint"
+          @open-delete-modal="handleConfirmDeleteModalOpen($event)"
+          :formErrors="formErrors"
+        />
       </div>
 
       <div class="p-6 bg-gray-50 border-t border-gray-200">
@@ -153,10 +102,16 @@ import ButtonBase from '@/components/base/ButtonBase.vue'
 import InputBar from '@/components/base/InputBar.vue'
 import { WaypointTypeEnum } from '@/enums'
 import PlusCircle from '@/components/icons/PlusCircle.vue'
-import XmarkCircle from '@/components/icons/XmarkCircle.vue'
-import ConfirmDeleteModal from '@/components/create/ConfirmDeleteModal.vue'
+import ConfirmDeleteModal from '@/components/base/ConfirmDeleteModal.vue'
 import { useToastMessageStore } from '@/stores/toast'
-import * as z from 'zod'
+import WaypointsForms from '@/components/create/WaypointsForms.vue'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+
+const router = useRouter()
+const toastMessageStore = useToastMessageStore()
 
 const formData = ref<Order>({
   number: null,
@@ -165,36 +120,48 @@ const formData = ref<Order>({
   waypoints: [],
 })
 
-const Order = z.object({
-  number: z.number().min(1),
-  customer_name: z.string().min(1),
-  date: z.string().min(1),
-  waypoints: z.array(
-    z.object({
-      id: z.string(),
-      location_address: z.string().min(1),
-      type: z.enum([WaypointTypeEnum.PICKUP, WaypointTypeEnum.DELIVERY]),
-    }),
-  ),
-})
+watch(
+  () => formData.value,
+  (newFormData) => {
+    console.log(newFormData)
+  },
+  { deep: true },
+)
 
-const router = useRouter()
-const toastMessageStore = useToastMessageStore()
+const formErrors = ref({
+  number: {
+    isError: false,
+    message: 'Number is required',
+  },
+  customer_name: {
+    isError: false,
+    message: 'Customer name is required',
+  },
+  date: {
+    isError: false,
+    message: 'Date is required',
+  },
+  location_address: {
+    isError: false,
+    message: 'All waypoints must have a location address',
+  },
+})
 
 const isConfirmDeleteModalOpen = ref(false)
 const waypointToDelete = ref<Waypoint | null>(null)
 
 const addOrder = async () => {
-  if (!validateForm()) return
-
   try {
+    if (!validateForm()) {
+      toastMessageStore.setMessage('Please fill in all required fields', 'error')
+      return
+    }
+
     const response = await fetch('http://localhost:3001/orders', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(formData.value),
     })
+
     if (!response.ok) throw Error('Something went wrong!')
 
     toastMessageStore.setMessage('Order created successfully!', 'success')
@@ -224,37 +191,39 @@ const handleConfirmDeleteModalOpen = (waypoint: Waypoint) => {
 }
 
 const validateForm = () => {
-  const validatedData = Order.safeParse(formData.value)
-  if (!validatedData.success) {
-    toastMessageStore.setMessage('Please fill in all required fields', 'error')
-    console.log(validatedData.error)
-    return false
+  if (!formData.value.number) {
+    formErrors.value.number.isError = true
+  } else {
+    formErrors.value.number.isError = false
   }
-  return true
-}
 
-watch(
-  () => formData.value,
-  () => {
-    console.log(formData.value)
-  },
-  { deep: true },
-)
+  if (!formData.value.customer_name) {
+    formErrors.value.customer_name.isError = true
+  } else {
+    formErrors.value.customer_name.isError = false
+  }
+
+  if (!formData.value.date) {
+    formErrors.value.date.isError = true
+    formErrors.value.date.message = 'Date is required'
+  } else {
+    const selectedDate = dayjs.utc(formData.value.date).startOf('day')
+    const today = dayjs.utc().startOf('day')
+
+    if (selectedDate.isBefore(today)) {
+      formErrors.value.date.isError = true
+      formErrors.value.date.message = 'Date must be a future date'
+    } else {
+      formErrors.value.date.isError = false
+    }
+  }
+
+  if (formData.value.waypoints.some((wpoint) => !wpoint.location_address)) {
+    formErrors.value.location_address.isError = true
+  } else {
+    formErrors.value.location_address.isError = false
+  }
+
+  return Object.values(formErrors.value).every((error) => !error.isError)
+}
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.fade-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-</style>

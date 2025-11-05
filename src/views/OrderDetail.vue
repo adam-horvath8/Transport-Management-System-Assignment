@@ -20,21 +20,25 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="flex flex-col gap-2">
               <p class="text-gray-600 font-semibold">Customer Name</p>
+
               <p class="text-lg">{{ order.customer_name }}</p>
             </div>
 
             <div class="flex flex-col gap-2">
               <p class="text-gray-600 font-semibold">Date</p>
+
               <p class="text-lg">{{ formatDate(order.date) }}</p>
             </div>
 
             <div class="flex flex-col gap-2">
               <p class="text-gray-600 font-semibold">Order ID</p>
+
               <p class="text-lg font-mono text-gray-700">{{ order.id }}</p>
             </div>
 
             <div class="flex flex-col gap-2">
               <p class="text-gray-600 font-semibold">Total Waypoints</p>
+
               <p class="text-lg">{{ order.waypoints.length }}</p>
             </div>
           </div>
@@ -58,6 +62,7 @@
                     {{ index + 1 }}. {{ waypoint.type === 'pickup' ? 'Pickup' : 'Delivery' }}
                   </span>
                 </div>
+
                 <p class="text-gray-700">{{ waypoint.location_address }}</p>
               </div>
             </div>
@@ -68,6 +73,11 @@
           </div>
         </div>
       </article>
+
+      <ButtonBase @click="isConfirmDeleteModalOpen = true" variant="red" class="self-center">
+        <XmarkCircle />
+        Delete Order
+      </ButtonBase>
     </div>
 
     <div v-else class="text-center py-12">
@@ -76,20 +86,31 @@
         Go to Orders
       </ButtonBase>
     </div>
+
+    <ConfirmDeleteModal v-model="isConfirmDeleteModalOpen" @confirm="deleteOrder" />
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type { Order } from '@/types'
 import ButtonBase from '@/components/base/ButtonBase.vue'
 import SpinnerBase from '@/components/base/SpinnerBase.vue'
 import LeftArrowCircle from '@/components/icons/LeftArrowCircle.vue'
+import XmarkCircle from '@/components/icons/XmarkCircle.vue'
+import { useToastMessageStore } from '@/stores/toast'
+import ConfirmDeleteModal from '@/components/base/ConfirmDeleteModal.vue'
+import { useDate } from '@/composables/useDate'
 
+const { formatDate } = useDate()
+const toastMessageStore = useToastMessageStore()
 const route = useRoute()
+const router = useRouter()
+
 const order = ref<Order | null>(null)
 const loading = ref(true)
+const isConfirmDeleteModalOpen = ref(false)
 
 const fetchOrder = async () => {
   try {
@@ -113,17 +134,20 @@ const fetchOrder = async () => {
   }
 }
 
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
+const deleteOrder = async () => {
   try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    const response = await fetch(`http://localhost:3001/orders/${route.params.id}`, {
+      method: 'DELETE',
     })
-  } catch {
-    return dateString
+
+    if (!response.ok) throw Error('Something went wrong!')
+
+    toastMessageStore.setMessage('Order deleted succsessfully', 'success')
+    router.push('/')
+  } catch (error) {
+    if (error) {
+      toastMessageStore.setMessage('Something went wrong!', 'error')
+    }
   }
 }
 
