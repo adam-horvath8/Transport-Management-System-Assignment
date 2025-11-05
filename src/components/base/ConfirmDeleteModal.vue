@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="modelValue"
-    class="fixed top-0 left-0 w-full h-full bg-black/50 backdrop:backdrop-blur-sm"
-  >
+  <div v-if="modelValue" class="fixed top-0 left-0 w-full h-full bg-black/50">
     <dialog
       ref="dialogRef"
       :open="modelValue"
@@ -13,6 +10,7 @@
         <div class="flex flex-col gap-4">
           <div class="flex flex-col gap-2">
             <h2 class="text-xl font-semibold">Confirm Delete</h2>
+
             <p class="text-gray-600">
               Are you sure you want to delete this item? This action cannot be undone.
             </p>
@@ -20,6 +18,7 @@
 
           <div class="flex gap-3 justify-end">
             <ButtonBase type="button" variant="gray" @click="handleCancel">Cancel</ButtonBase>
+
             <ButtonBase type="button" variant="red" @click="handleConfirm">Delete</ButtonBase>
           </div>
         </div>

@@ -9,8 +9,8 @@
         props.class,
       )
     "
-    active-class="bg-blue-600 outline outline-4 outline-white"
-    exact-active-class="bg-blue-600 outline outline-4 outline-white"
+    active-class="bg-blue-700 outline outline-4 outline-white"
+    exact-active-class="bg-blue-700 outline outline-4 outline-white"
     :disabled="disabled"
   >
     <slot />
@@ -43,7 +43,7 @@ const elementTag = computed(() => {
 const variantClass = computed(() => {
   switch (props.variant) {
     case 'blue':
-      return 'bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-50'
+      return 'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600 disabled:opacity-50'
     case 'gray':
       return 'bg-gray-500 hover:bg-gray-600 disabled:bg-gray-500 disabled:opacity-50'
     case 'red':
@@ -51,7 +51,7 @@ const variantClass = computed(() => {
     case 'green':
       return 'bg-green-500 hover:bg-green-600 disabled:bg-green-500 disabled:opacity-50'
     default:
-      return 'bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-50'
+      return 'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600 disabled:opacity-50'
   }
 })
 

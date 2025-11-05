@@ -4,7 +4,7 @@
       <SpinnerBase size="xl" />
     </div>
 
-    <div v-else-if="order" class="w-full flex flex-col gap-6">
+    <div v-else-if="orderStore.order" class="w-full flex flex-col gap-6">
       <div class="flex items-center justify-between">
         <ButtonBase elementType="link" :to="{ name: 'orders' }" variant="gray">
           <LeftArrowCircle /> Back to Orders
@@ -12,60 +12,33 @@
       </div>
 
       <article class="bg-white rounded-lg shadow-lg overflow-hidden">
-        <header class="bg-blue-600 p-6 text-white">
-          <h1 class="text-3xl font-bold">Order #{{ order.number }}</h1>
+        <header class="bg-blue-700 p-6 text-white">
+          <h1 class="text-3xl font-bold">Order #{{ orderStore.order?.number ?? '' }}</h1>
         </header>
 
         <div class="p-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div class="flex flex-col gap-2">
-              <p class="text-gray-600 font-semibold">Customer Name</p>
+            <DataCell label="Customer Name" :value="orderStore.order?.customer_name ?? ''" />
 
-              <p class="text-lg">{{ order.customer_name }}</p>
-            </div>
+            <DataCell label="Date" :value="formatDate(orderStore.order?.date ?? '')" />
 
-            <div class="flex flex-col gap-2">
-              <p class="text-gray-600 font-semibold">Date</p>
+            <DataCell
+              v-if="orderStore.order?.id"
+              label="Order ID"
+              :value="orderStore.order?.id ?? ''"
+            />
 
-              <p class="text-lg">{{ formatDate(order.date) }}</p>
-            </div>
-
-            <div class="flex flex-col gap-2">
-              <p class="text-gray-600 font-semibold">Order ID</p>
-
-              <p class="text-lg font-mono text-gray-700">{{ order.id }}</p>
-            </div>
-
-            <div class="flex flex-col gap-2">
-              <p class="text-gray-600 font-semibold">Total Waypoints</p>
-
-              <p class="text-lg">{{ order.waypoints.length }}</p>
-            </div>
+            <DataCell
+              v-if="orderStore.order?.waypoints.length"
+              label="Total Waypoints"
+              :value="orderStore.order?.waypoints.length.toString()"
+            />
           </div>
 
-          <div v-if="order.waypoints.length > 0" class="mt-8">
-            <h2 class="text-2xl font-bold text-blue-700 mb-4">Waypoints</h2>
+          <div v-if="orderStore.order?.waypoints.length > 0" class="mt-8">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4">Waypoints</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div
-                v-for="(waypoint, index) in order.waypoints"
-                :key="waypoint.id"
-                class="bg-gray-100 p-4 rounded-lg relative"
-              >
-                <div class="flex items-center gap-2 mb-2">
-                  <span
-                    :class="[
-                      'px-3 py-1 rounded-full text-sm font-semibold text-white',
-                      waypoint.type === 'pickup' ? 'bg-green-500' : 'bg-blue-500',
-                    ]"
-                  >
-                    {{ index + 1 }}. {{ waypoint.type === 'pickup' ? 'Pickup' : 'Delivery' }}
-                  </span>
-                </div>
-
-                <p class="text-gray-700">{{ waypoint.location_address }}</p>
-              </div>
-            </div>
+            <WaypointCell :waypoints="orderStore.order?.waypoints ?? []" />
           </div>
 
           <div v-else class="mt-8 p-6 bg-gray-100 rounded-lg text-center">
@@ -74,14 +47,24 @@
         </div>
       </article>
 
-      <ButtonBase @click="isConfirmDeleteModalOpen = true" variant="red" class="self-center">
-        <XmarkCircle />
-        Delete Order
-      </ButtonBase>
+      <div class="flex gap-4 self-center">
+        <ButtonBase
+          elementType="link"
+          :to="{ name: 'edit-order', params: { id: orderStore.order?.id } }"
+        >
+          <PenEdit /> Edit
+        </ButtonBase>
+
+        <ButtonBase @click="isConfirmDeleteModalOpen = true" variant="red">
+          <XmarkCircle />
+          Delete Order
+        </ButtonBase>
+      </div>
     </div>
 
     <div v-else class="text-center py-12">
       <p class="text-gray-600 text-lg">Order not found</p>
+
       <ButtonBase elementType="link" :to="{ name: 'orders' }" class="mt-4">
         Go to Orders
       </ButtonBase>
@@ -94,7 +77,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { Order } from '@/types'
 import ButtonBase from '@/components/base/ButtonBase.vue'
 import SpinnerBase from '@/components/base/SpinnerBase.vue'
 import LeftArrowCircle from '@/components/icons/LeftArrowCircle.vue'
@@ -102,13 +84,17 @@ import XmarkCircle from '@/components/icons/XmarkCircle.vue'
 import { useToastMessageStore } from '@/stores/toast'
 import ConfirmDeleteModal from '@/components/base/ConfirmDeleteModal.vue'
 import { useDate } from '@/composables/useDate'
+import DataCell from '@/components/order/DataCell.vue'
+import WaypointCell from '@/components/order/WaypointCell.vue'
+import PenEdit from '@/components/icons/PenEdit.vue'
+import { useOrderStore } from '@/stores/order'
 
 const { formatDate } = useDate()
 const toastMessageStore = useToastMessageStore()
 const route = useRoute()
 const router = useRouter()
+const orderStore = useOrderStore()
 
-const order = ref<Order | null>(null)
 const loading = ref(true)
 const isConfirmDeleteModalOpen = ref(false)
 
@@ -119,16 +105,18 @@ const fetchOrder = async () => {
 
     if (!response.ok) {
       if (response.status === 404) {
-        order.value = null
+        orderStore.clearOrderData()
         return
       }
       throw Error('Something went wrong!')
     }
 
-    order.value = await response.json()
+    orderStore.setOrderData(await response.json())
   } catch (error) {
-    console.error(error)
-    order.value = null
+    if (error) {
+      toastMessageStore.setMessage('Something went wrong!', 'error')
+    }
+    orderStore.clearOrderData()
   } finally {
     loading.value = false
   }
@@ -143,7 +131,7 @@ const deleteOrder = async () => {
     if (!response.ok) throw Error('Something went wrong!')
 
     toastMessageStore.setMessage('Order deleted succsessfully', 'success')
-    router.push('/')
+    router.push('/orders')
   } catch (error) {
     if (error) {
       toastMessageStore.setMessage('Something went wrong!', 'error')

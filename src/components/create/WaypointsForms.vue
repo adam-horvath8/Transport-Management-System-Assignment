@@ -20,7 +20,7 @@
         <div class="flex items-center justify-between">
           <span
             class="px-3 py-1 rounded-full text-sm font-semibold text-white"
-            :class="waypoint.type === 'pickup' ? 'bg-green-500' : 'bg-blue-500'"
+            :class="waypoint.type === 'pickup' ? 'bg-indigo-400' : 'bg-orange-400'"
           >
             {{ index + 1 }}. {{ waypoint.type === 'pickup' ? 'Pickup' : 'Delivery' }}
           </span>
@@ -58,7 +58,7 @@
             <select
               :id="`type_${waypoint.id}`"
               v-model="waypoint.type"
-              class="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base bg-white border border-gray-300"
+              class="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-base bg-white border border-gray-300"
             >
               <option value="pickup">Pickup</option>
 

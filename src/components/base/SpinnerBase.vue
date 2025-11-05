@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-center">
     <div
-      class="animate-spin rounded-full border-t-4 border-b-4 border-blue-500"
+      class="animate-spin rounded-full border-t-4 border-b-4 border-blue-600"
       :class="twMerge(sizeClass, variantClass, props.class)"
     ></div>
   </div>
@@ -41,11 +41,11 @@ const sizeClass = computed(() => {
 const variantClass = computed(() => {
   switch (props.variant) {
     case 'blue':
-      return 'border-blue-500'
+      return 'border-blue-600'
     case 'white':
       return 'border-white'
     default:
-      return 'border-blue-500'
+      return 'border-blue-600'
   }
 })
 </script>

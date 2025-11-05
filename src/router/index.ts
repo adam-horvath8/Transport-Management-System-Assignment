@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/OrdersView.vue'
-import TwoExample from '../views/CreateOrder.vue'
+import CreateOrder from '../views/CreateOrder.vue'
 import DefaultLayout from '@/components/layouts/DefaultLayout.vue'
 import OrderDetail from '@/views/OrderDetail.vue'
+import NotFoundView from '@/views/NotFound.vue'
+import EditOrder from '@/views/EditOrder.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,14 +15,19 @@ const router = createRouter({
       component: DefaultLayout,
       children: [
         {
-          path: '/',
+          path: '/orders',
           name: 'orders',
           component: HomeView,
         },
         {
+          path: '/edit-order/:id',
+          name: 'edit-order',
+          component: EditOrder,
+        },
+        {
           path: '/create-order',
           name: 'create-order',
-          component: TwoExample,
+          component: CreateOrder,
         },
         {
           path: '/order/:id',
@@ -28,6 +35,12 @@ const router = createRouter({
           component: OrderDetail,
         },
       ],
+    },
+
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: NotFoundView,
     },
   ],
 })
