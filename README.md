@@ -1,48 +1,312 @@
 # Transport Management System Assignment
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue.js frontend application for managing transport orders with waypoints. This application allows users to create, view, edit, and delete transport orders, each containing multiple waypoints (pickup and delivery locations).
 
-## Recommended IDE Setup
+## Table of Contents
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- [Tech Stack](#tech-stack)
+- [Setup Instructions](#setup-instructions)
+- [How to Run the App](#how-to-run-the-app)
+- [Mock API Setup](#mock-api-setup)
+- [API Mock Documentation](#api-mock-documentation)
+- [Sample Data](#sample-data)
+- [Assumptions and Decisions](#assumptions-and-decisions)
+- [Project Structure](#project-structure)
 
-## Recommended Browser Setup
+## Tech Stack
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- **Frontend Framework**: Vue 3 (Composition API)
+- **Build Tool**: Vite
+- **Language**: TypeScript
+- **State Management**: Pinia
+- **Routing**: Vue Router
+- **Styling**: Tailwind CSS
+- **Date Handling**: Day.js
+- **Mock API**: JSON Server
 
-## Type Support for `.vue` Imports in TS
+## Setup Instructions
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### Prerequisites
 
-## Customize configuration
+- Node.js version `^20.19.0` or `>=22.12.0`
+- npm (comes with Node.js)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Installation
 
-## Project Setup
+First make sure you have node installed on your computer.
 
-```sh
-npm install
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/adam-horvath8/Transport-Management-System-Assignment.git
+   cd TransportManagementSystemAssignment
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. The project is now ready to run. See [How to Run the App](#how-to-run-the-app) section below.
+
+## How to Run the App
+
+The application requires two separate processes to run: the mock API server and the frontend development server.
+
+### Option 1: Run Both Servers Manually (Recommended for Development)
+
+1. **Start the Mock API Server** (Terminal 1):
+
+   ```bash
+   npm run json-server
+   ```
+
+   This will start JSON Server on `http://localhost:3001`
+
+2. **Start the Frontend Development Server** (Terminal 2):
+
+   ```bash
+   npm run dev
+   ```
+
+   This will start the Vue.js application on `http://localhost:3000`
+
+3. Open your browser and navigate to `http://localhost:3000`
+
+### Option 2: Run Both Servers in Parallel
+
+Run them in separate terminal windows/tabs.
+
+
+## Mock API Setup
+
+### Choice: JSON Server
+
+This project uses **JSON Server** as the mock API solution. JSON Server is a lightweight, zero-configuration REST API server that creates a full REST API from a JSON file.
+
+### Why JSON Server?
+
+- **Zero Configuration**: Works out of the box with minimal setup
+- **RESTful API**: Automatically provides REST endpoints (GET, POST, PUT, PATCH, DELETE)
+- **File-based**: Data is stored in a simple `db.json` file, making it easy to version control and reset
+- **Hot Reload**: Automatically watches the JSON file for changes
+
+### Setup Guide
+
+1. **Installation**: JSON Server is already included as a dependency in `package.json`. If you need to install it separately:
+
+   ```bash
+   npm install json-server
+   ```
+
+2. **Configuration**: The JSON Server is configured via the npm script in `package.json`:
+
+   ```json
+   "json-server": "json-server --watch db.json --port 3001 --host 0.0.0.0"
+   ```
+
+   - `--watch db.json`: Watches the `db.json` file for changes
+   - `--port 3001`: Runs on port 3001
+   - `--host 0.0.0.0`: Allows access from any network interface
+
+3. **Data File**: The mock data is stored in `db.json` at the root of the project. The structure follows:
+
+   ```json
+   {
+     "orders": [...]
+   }
+   ```
+
+4. **Starting the Server**: Run the command:
+
+   ```bash
+   npm run json-server
+   ```
+
+5. **Verification**: Once started, you can verify the API is working by visiting:
+   - `http://localhost:3001/orders` - Should return all orders
+   - `http://localhost:3001/orders/:id` - Should return a specific order
+
+## API Mock Documentation
+
+### Base URL
+
+```
+http://localhost:3001
 ```
 
-### Compile and Hot-Reload for Development
+### Endpoints
 
-```sh
-npm run dev
+#### Get All Orders
+
+```http
+GET /orders
 ```
 
-### Type-Check, Compile and Minify for Production
+**Response**: Array of order objects
 
-```sh
-npm run build
+```json
+[
+  {
+    "id": "7d2c",
+    "number": 1,
+    "customer_name": "ABC Corporation",
+    "date": "2025-11-15T10:30:00Z",
+    "waypoints": [...]
+  }
+]
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+#### Get Single Order
 
-```sh
-npm run lint
+```http
+GET /orders/:id
 ```
+
+**Response**: Single order object
+
+```json
+{
+  "id": "7d2c",
+  "number": 1,
+  "customer_name": "ABC Corporation",
+  "date": "2025-11-15T10:30:00Z",
+  "waypoints": [...]
+}
+```
+
+#### Create Order
+
+```http
+POST /orders
+Content-Type: application/json
+```
+
+**Request Body**:
+
+```json
+{
+  "number": 4,
+  "customer_name": "New Customer",
+  "date": "2025-11-20T10:00:00Z",
+  "waypoints": [
+    {
+      "id": "unique-id",
+      "location_address": "123 Street, City",
+      "type": "pickup"
+    }
+  ]
+}
+```
+
+**Response**: Created order object (with generated `id`)
+
+#### Update Order
+
+```http
+PUT /orders/:id
+Content-Type: application/json
+```
+
+**Request Body**: Complete order object with updated fields
+
+**Response**: Updated order object
+
+#### Delete Order
+
+```http
+DELETE /orders/:id
+```
+
+**Response**: Empty object `{}`
+
+### Data Structure
+
+#### Order Object
+
+```typescript
+{
+  id: string              // Unique identifier (auto-generated by JSON Server)
+  number: number          // Order number
+  customer_name: string   // Customer name
+  date: string           // ISO 8601 date string
+  waypoints: Waypoint[]  // Array of waypoints
+}
+```
+
+#### Waypoint Object
+
+```typescript
+{
+  id: string // Unique identifier
+  location_address: string // Address of the waypoint
+  type: 'pickup' | 'delivery' // Type of waypoint
+}
+```
+
+### Query Parameters (JSON Server Features)
+
+JSON Server supports additional query parameters:
+
+- **Filtering**: `GET /orders?customer_name=ABC Corporation`
+- **Sorting**: `GET /orders?_sort=date&_order=desc`
+- **Pagination**: `GET /orders?_page=1&_limit=10`
+- **Full-text Search**: `GET /orders?q=ABC`
+
+
+## Project Structure
+
+```
+TransportManagementSystemAssignment/
+├── db.json                 # Mock API database (JSON Server)
+├── src/
+│   ├── assets/            # Static assets (CSS, images)
+│   ├── components/        # Vue components
+│   │   ├── base/          # Reusable base components
+│   │   ├── create/        # Order creation components
+│   │   ├── icons/         # Icon components
+│   │   ├── layouts/       # Layout components
+│   │   └── order/         # Order-specific components
+│   ├── composables/       # Vue composables (shared logic)
+│   ├── enums/             # TypeScript enums
+│   ├── router/            # Vue Router configuration
+│   ├── stores/            # Pinia stores
+│   ├── types/             # TypeScript type definitions
+│   ├── views/             # Page components
+│   ├── App.vue            # Root component
+│   └── main.ts            # Application entry point
+├── public/                # Public static files
+├── package.json           # Dependencies and scripts
+├── vite.config.ts         # Vite configuration
+├── tailwind.config.ts     # Tailwind CSS configuration
+└── tsconfig.json          # TypeScript configuration
+```
+
+## Development Notes
+
+- The application runs on port 3000 (frontend) and port 3001 (mock API)
+- All API calls use `fetch` API (native browser API)
+- The application supports creating, reading, updating, and deleting orders
+- Waypoints can be added, removed, and reordered within an order
+- Date filtering and search functionality are available on the orders list page
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 3000 or 3001 is already in use:
+
+1. **Change Vite port**: Edit `vite.config.ts` and change the port number
+2. **Change JSON Server port**: Edit the `json-server` script in `package.json`
+
+### API Not Responding
+
+- Ensure JSON Server is running before starting the frontend
+- Check that `db.json` exists and has valid JSON structure
+- Verify the API is accessible at `http://localhost:3001/orders`
+
+
+## License
+
+This project is created for assignment purposes.
