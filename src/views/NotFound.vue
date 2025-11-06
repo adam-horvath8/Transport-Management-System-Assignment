@@ -19,6 +19,6 @@ import ButtonBase from '@/components/base/ButtonBase.vue'
 const router = useRouter()
 
 const goHome = () => {
-  router.push('/orders')
+  router.push('/')
 }
 </script>

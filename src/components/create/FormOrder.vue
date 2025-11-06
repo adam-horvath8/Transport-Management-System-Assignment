@@ -168,7 +168,7 @@ const createOrder = async () => {
     if (!response.ok) throw Error('Something went wrong!')
 
     toastMessageStore.setMessage('Order created successfully!', 'success')
-    router.push('/orders')
+    router.push('/')
   } catch (error) {
     if (error) {
       toastMessageStore.setMessage('Something went wrong!', 'error')
