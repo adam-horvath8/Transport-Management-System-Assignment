@@ -78,7 +78,6 @@ The application requires two separate processes to run: the mock API server and 
 
 Run them in separate terminal windows/tabs.
 
-
 ## Mock API Setup
 
 ### Choice: JSON Server
@@ -245,16 +244,6 @@ DELETE /orders/:id
 }
 ```
 
-### Query Parameters (JSON Server Features)
-
-JSON Server supports additional query parameters:
-
-- **Filtering**: `GET /orders?customer_name=ABC Corporation`
-- **Sorting**: `GET /orders?_sort=date&_order=desc`
-- **Pagination**: `GET /orders?_page=1&_limit=10`
-- **Full-text Search**: `GET /orders?q=ABC`
-
-
 ## Project Structure
 
 ```
@@ -305,7 +294,6 @@ If port 3000 or 3001 is already in use:
 - Ensure JSON Server is running before starting the frontend
 - Check that `db.json` exists and has valid JSON structure
 - Verify the API is accessible at `http://localhost:3001/orders`
-
 
 ## License
 

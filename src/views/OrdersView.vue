@@ -169,6 +169,7 @@ const filterByDate = (order: Order): boolean => {
   }
 }
 
+// For the purpose of this assignment the filtering is done in the frontend
 const handleSearch = async () => {
   await fetchOrders()
 
